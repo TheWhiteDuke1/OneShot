@@ -657,7 +657,7 @@ class Companion:
                 print("[*] Starting WPS push button connection…")
                 cmd = 'WPS_PBC'
         else:
-            print(f"[*] Trying PIN '{pin}'…")
+            print(f"[*] Проверка ПИНа '{pin}'…")
             cmd = f'WPS_REG {bssid} {pin}'
         r = self.sendAndReceive(cmd)
         if 'OK' not in r:

@@ -434,7 +434,7 @@ class Companion:
         self.generator = WPSpin()
 
     def __init_wpa_supplicant(self):
-        print('[*] Running wpa_supplicant…')
+        print('[*] Запуск wpa_supplicant...')
         cmd = 'wpa_supplicant -K -d -Dnl80211,wext,hostapd,wired -i{} -c{}'.format(self.interface, self.tempconf)
         self.wpas = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT, encoding='utf-8', errors='replace')
@@ -981,15 +981,15 @@ class WiFiScanner:
             return text
 
         if self.vuln_list:
-            print('Network marks: {1} {0} {2} {0} {3}'.format(
+            print('Сети бывают: {1} {0} {2} {0} {3}'.format(
                 '|',
-                colored('Possibly vulnerable', color='green'),
-                colored('WPS locked', color='red'),
-                colored('Already stored', color='yellow')
+                colored('Возможно уязвимая', color='green'),
+                colored('WPS заблокирован', color='red'),
+                colored('Уже сохранённа', color='yellow')
             ))
-        print('Networks list:')
+        print('Список сетей:')
         print('{:<4} {:<18} {:<25} {:<8} {:<4} {:<27} {:<}'.format(
-            '#', 'BSSID', 'ESSID', 'Sec.', 'PWR', 'WSC device name', 'WSC model'))
+            '#', 'BSSID', 'ESSID', 'Защита', 'Сила сигнала', 'WSC имя девайса', 'WSC модель'))
 
         network_list_items = list(network_list.items())
         if args.reverse_scan:
@@ -1210,7 +1210,7 @@ if __name__ == '__main__':
                         vuln_list = []
                     scanner = WiFiScanner(args.interface, vuln_list)
                     if not args.loop:
-                        print('[*] BSSID not specified (--bssid) — scanning for available networks')
+                        print('[*] BSSID не указан (--bssid) - сканирование на наличие доступных сетей')
                     args.bssid = scanner.prompt_network()
 
                 if args.bssid:

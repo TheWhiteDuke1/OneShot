@@ -4,9 +4,8 @@
 Вручную
 Установка требований
 
-pkg install -y root-repo
-
-pkg install -y git tsu python wpa-supplicant pixiewps iw openssl
+1) pkg install -y root-repo
+2) pkg install -y git tsu python wpa-supplicant pixiewps iw openssl
 
 Получение OneShot
 

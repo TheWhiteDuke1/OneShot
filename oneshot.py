@@ -462,9 +462,9 @@ class Companion:
     def _explain_wpas_not_ok_status(command: str, respond: str):
         if command.startswith(('WPS_REG', 'WPS_PBC')):
             if respond == 'UNKNOWN COMMAND':
-                return ('[!] It looks like your wpa_supplicant is compiled without WPS protocol support. '
-                        'Please build wpa_supplicant with WPS support ("CONFIG_WPS=y")')
-        return '[!] Something went wrong — check out debug log'
+                return ('[!] Похоже, что ваш wpa_supplicant скомпилирован без поддержки протокола WPS. '
+                        'Пожалуйста, создайте wpa_supplicant с поддержкой WPS ("CONFIG_WPS=y")')
+        return '[!] Что-то пошло не так - проверьте журнал отладки'
 
     def __handle_wpas(self, pixiemode=False, pbc_mode=False, verbose=None):
         if not verbose:
@@ -482,17 +482,17 @@ class Companion:
             if 'Building Message M' in line:
                 n = int(line.split('Building Message M')[1].replace('D', ''))
                 self.connection_status.last_m_message = n
-                print('[*] Sending WPS Message M{}…'.format(n))
+                print('[*] Отправка сообщения WPS M{}...'.format(n))
             elif 'Received M' in line:
                 n = int(line.split('Received M')[1])
                 self.connection_status.last_m_message = n
-                print('[*] Received WPS Message M{}'.format(n))
+                print('[*] Получено сообщение WPS M{}...'.format(n))
                 if n == 5:
                     print('[+] The first half of the PIN is valid')
             elif 'Received WSC_NACK' in line:
                 self.connection_status.status = 'WSC_NACK'
-                print('[*] Received WSC NACK')
-                print('[-] Error: wrong PIN code')
+                print('[*] Получено WSC NACK')
+                print('[-] Ошибка: неправильный PIN-код')
             elif 'Enrollee Nonce' in line and 'hexdump' in line:
                 self.pixie_creds.e_nonce = get_hex(line)
                 assert(len(self.pixie_creds.e_nonce) == 16*2)
@@ -512,7 +512,7 @@ class Companion:
                 self.pixie_creds.authkey = get_hex(line)
                 assert(len(self.pixie_creds.authkey) == 32*2)
                 if pixiemode:
-                    print('[P] AuthKey: {}'.format(self.pixie_creds.authkey))
+                    print('[P] AuthKey (Ключ Авторизации): {}'.format(self.pixie_creds.authkey))
             elif 'E-Hash1' in line and 'hexdump' in line:
                 self.pixie_creds.e_hash1 = get_hex(line)
                 assert(len(self.pixie_creds.e_hash1) == 32*2)
@@ -529,24 +529,24 @@ class Companion:
         elif ': State: ' in line:
             if '-> SCANNING' in line:
                 self.connection_status.status = 'scanning'
-                print('[*] Scanning…')
+                print('[*] Сканирование…')
         elif ('WPS-FAIL' in line) and (self.connection_status.status != ''):
             self.connection_status.status = 'WPS_FAIL'
-            print('[-] wpa_supplicant returned WPS-FAIL')
+            print('[-] wpa_supplicant возвращается WPS-FAIL')
 #        elif 'NL80211_CMD_DEL_STATION' in line:
 #            print("[!] Unexpected interference — kill NetworkManager/wpa_supplicant!")
         elif 'Trying to authenticate with' in line:
             self.connection_status.status = 'authenticating'
             if 'SSID' in line:
                 self.connection_status.essid = codecs.decode("'".join(line.split("'")[1:-1]), 'unicode-escape').encode('latin1').decode('utf-8', errors='replace')
-            print('[*] Authenticating…')
+            print('[*] Аутентификация…')
         elif 'Authentication response' in line:
-            print('[+] Authenticated')
+            print('[+] Аутентифицирован')
         elif 'Trying to associate with' in line:
             self.connection_status.status = 'associating'
             if 'SSID' in line:
                 self.connection_status.essid = codecs.decode("'".join(line.split("'")[1:-1]), 'unicode-escape').encode('latin1').decode('utf-8', errors='replace')
-            print('[*] Associating with AP…')
+            print('[*] Ассоциация с AP...')
         elif ('Associated with' in line) and (self.interface in line):
             bssid = line.split()[-1].upper()
             if self.connection_status.essid:

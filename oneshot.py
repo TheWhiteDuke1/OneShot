@@ -488,7 +488,7 @@ class Companion:
                 self.connection_status.last_m_message = n
                 print('[*] Получено сообщение WPS M{}...'.format(n))
                 if n == 5:
-                    print('[+] The first half of the PIN is valid')
+                    print('[+] Первая половина PIN-кода действительна')
             elif 'Received WSC_NACK' in line:
                 self.connection_status.status = 'WSC_NACK'
                 print('[*] Получено WSC NACK')

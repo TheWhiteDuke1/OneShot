@@ -1227,12 +1227,12 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             if args.loop:
                 if input("\n[?] Exit the script (otherwise continue to AP scan)? [N/y] ").lower() == 'y':
-                    print("Aborting…")
+                    print("Возврат…")
                     break
                 else:
                     args.bssid = None
             else:
-                print("\nAborting…")
+                print("\nВозврат…")
                 break
 
     if args.iface_down:
